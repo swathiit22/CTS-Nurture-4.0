@@ -1,0 +1,202 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Local Community Event Portal</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    .event-card { padding: 10px; border: 1px solid #ccc; margin: 5px; }
+    #spinner { display: none; }
+  </style>
+</head>
+<body>
+
+<h1>Welcome to the Community Portal</h1>
+<div id="events"></div>
+<form id="registerForm">
+  <input name="name" placeholder="Name"><br>
+  <input name="email" placeholder="Email"><br>
+  <select name="eventSelect">
+    <option value="Music Fest">Music Fest</option>
+  </select><br>
+  <button type="submit">Register</button>
+</form>
+
+<div id="spinner">Loading...</div>
+
+<button id="registerBtn">Register (jQuery)</button>
+<div id="eventCard" style="display:none">Event Details</div>
+
+<form id="debugForm">
+  <button type="submit">Debug Submit</button>
+</form>
+
+<script>
+// 1. JavaScript Basics
+console.log("Welcome to the Community Portal");
+window.onload = () => { alert("Page is fully loaded"); };
+
+// 2. Syntax, Data Types, and Operators
+const eventName = "Tech Meetup";
+const eventDate = "2025-06-15";
+let availableSeats = 50;
+console.log(`${eventName} is on ${eventDate}. Seats left: ${availableSeats}`);
+availableSeats--;
+console.log(`Seats left after registration: ${availableSeats}`);
+
+// 3. Conditionals, Loops, and Error Handling
+const events = [
+  { name: "Music Fest", date: "2025-06-30", seats: 20, category: "Music" },
+  { name: "Old Event", date: "2024-12-01", seats: 10, category: "Music" },
+  { name: "Full Event", date: "2025-07-01", seats: 0, category: "Education" }
+];
+const today = new Date();
+events.forEach(event => {
+  const isFuture = new Date(event.date) > today;
+  if (isFuture && event.seats > 0) {
+    console.log(`Upcoming: ${event.name}`);
+  }
+});
+function register(event) {
+  try {
+    if (event.seats <= 0) throw "No seats available!";
+    event.seats--;
+    console.log(`Registered for ${event.name}`);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// 4. Functions and Closures
+function addEvent(name, date, category) {
+  return { name, date, category, seats: 50 };
+}
+function registerUser(event) {
+  if (event.seats > 0) event.seats--;
+}
+function filterEventsByCategory(events, category) {
+  return events.filter(e => e.category === category);
+}
+function createCategoryCounter() {
+  let count = 0;
+  return () => ++count;
+}
+const musicCounter = createCategoryCounter();
+musicCounter();
+
+// 5. Objects and Prototypes
+function Event(name, date, seats) {
+  this.name = name;
+  this.date = date;
+  this.seats = seats;
+}
+Event.prototype.checkAvailability = function () {
+  return this.seats > 0;
+};
+const e = new Event("Yoga", "2025-07-10", 10);
+console.log(Object.entries(e));
+
+// 6. Arrays and Methods
+const allEvents = [];
+allEvents.push({ name: "Workshop", category: "Education" });
+allEvents.push({ name: "Rock Show", category: "Music" });
+const musicEvents = allEvents.filter(e => e.category === "Music");
+const formatted = allEvents.map(e => `Event: ${e.name}`);
+console.log(formatted);
+
+// 7. DOM Manipulation
+const container = document.querySelector("#events");
+allEvents.forEach(event => {
+  const card = document.createElement("div");
+  card.className = "event-card";
+  card.textContent = `${event.name} - ${event.category}`;
+  container.appendChild(card);
+});
+
+// 8. Event Handling
+document.querySelectorAll(".registerBtn").forEach(btn => {
+  btn.onclick = () => alert("Registered!");
+});
+document.querySelector("#registerForm").onchange = e => {
+  console.log("Form changed:", e.target.value);
+};
+document.addEventListener("keydown", e => {
+  console.log("Key pressed:", e.key);
+});
+
+// 9. Async JS
+async function getEvents() {
+  document.querySelector("#spinner").style.display = "block";
+  try {
+    const res = await fetch('https://mockapi.io/events');
+    const data = await res.json();
+    console.log(data);
+  } catch (e) {
+    console.error(e);
+  } finally {
+    document.querySelector("#spinner").style.display = "none";
+  }
+}
+
+// 10. Modern JS Features
+const event = { name: "Art Show", date: "2025-08-15", seats: 100 };
+const { name, date } = event;
+const copy = [...allEvents];
+function printEvent(e = { name: "Default", date: "TBD" }) {
+  console.log(`${e.name} on ${e.date}`);
+}
+
+// 11. Working with Forms
+document.querySelector("#registerForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+  const { name, email, eventSelect } = e.target.elements;
+  if (!name.value || !email.value) {
+    alert("All fields required!");
+    return;
+  }
+  console.log(`Registering ${name.value} for ${eventSelect.value}`);
+});
+
+// 12. AJAX & Fetch API
+function submitForm(data) {
+  console.log("Sending data...", data);
+  setTimeout(() => {
+    fetch("https://mockapi.io/register", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: { "Content-Type": "application/json" }
+    })
+    .then(res => res.json())
+    .then(() => alert("Registered successfully!"))
+    .catch(() => alert("Failed to register."));
+  }, 2000);
+}
+
+// 13. Debugging
+document.querySelector("#debugForm").addEventListener("submit", e => {
+  e.preventDefault();
+  console.log("Form submitted");
+  try {
+    const data = { name: "Test", email: "" };
+    console.log("Payload", data);
+    fetch("https://mockapi.io/debug", {
+      method: "POST",
+      body: JSON.stringify(data)
+    }).then(res => {
+      if (!res.ok) throw new Error("Server error");
+      return res.json();
+    });
+  } catch (err) {
+    console.error("Error:", err);
+  }
+});
+
+// 14. jQuery & Frameworks
+$('#registerBtn').click(() => {
+  $('#eventCard').fadeIn();
+});
+</script>
+
+</body>
+</html>
