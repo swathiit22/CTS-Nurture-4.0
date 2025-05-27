@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Local Community Event Portal</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    nav { background-color: #333; color: white; padding: 10px; }
+    nav a { color: white; margin: 0 10px; text-decoration: none; }
+    #welcomeBanner { background-color: blue; color: white; padding: 10px; }
+    .highlight { font-weight: bold; color: green; }
+    .gallery-img { border: 2px solid black; width: 100px; height: 100px; }
+    form { margin: 20px; }
+    textarea { width: 100%; height: 100px; }
+  </style>
+</head>
+<body>
+
+
+
+  <!-- Navigation -->
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#events">Events</a>
+    <a href="#contact">Contact</a>
+    <a href="help.html" target="_blank">Help</a>
+  </nav>
+
+
+
+  <!-- Welcome Banner -->
+  <div id="welcomeBanner">
+    Welcome back, <span style="color: red; font-weight: bold;">Special Offer!</span>
+  </div>
+
+
+
+  <!-- Main Content -->
+  <main>
+    <section id="events">
+      <h2 class="highlight">Upcoming Community Events</h2>
+
+      <!-- Image Gallery -->
+      <table border="1">
+        <caption>Community Events Gallery</caption>
+        <tr>
+          <td><img src="img1.jpg" alt="Event 1" title="Pic 1" class="gallery-img"></td>
+          <td><img src="img2.jpg" alt="Event 2" title="Pic 2" class="gallery-img"></td>
+          <td><img src="img3.jpg" alt="Event 3" title="Pic 3" class="gallery-img"></td>
+        </tr>
+        <tr>
+          <td><img src="img4.jpg" alt="Event 4" title="Pic 4" class="gallery-img"></td>
+          <td><img src="img5.jpg" alt="Event 5" title="Pic 5" class="gallery-img"></td>
+          <td><img src="img6.jpg" alt="Event 6" title="Pic 6" class="gallery-img"></td>
+        </tr>
+      </table>
+
+
+
+      <!-- Event Registration Form -->
+      <form onsubmit="showOutput(event)">
+        <input type="text" placeholder="Your Name" required autofocus><br>
+        <input type="email" placeholder="Your Email" required><br>
+        <input type="date" required><br>
+        <select id="eventType" onchange="savePreference(this)" required>
+          <option value="">Select Event Type</option>
+          <option value="Workshop">Workshop</option>
+          <option value="Seminar">Seminar</option>
+        </select><br>
+        <textarea placeholder="Message"></textarea><br>
+        <input type="tel" placeholder="Phone" onblur="validatePhone(this)"><br>
+        <p id="feeDisplay"></p>
+        <button type="submit" onclick="alert('Submitted!')">Register</button>
+        <output id="confirmation"></output>
+        <button type="button" onclick="clearPrefs()">Clear Preferences</button>
+      </form>
+
+
+
+      <!-- Feedback Area -->
+      <textarea onkeyup="countChars(this)"></textarea>
+      <p id="charCount"></p>
+
+      <!-- Promo Video -->
+      <video src="promo.mp4" controls oncanplay="readyToPlay()"></video>
+      <p id="videoStatus"></p>
+
+      <!-- Find Nearby Events -->
+      <button onclick="findNearby()">Find Nearby Events</button>
+      <p id="locationOutput"></p>
+    </section>
+
+    <section id="contact">
+      <h2>Contact Us</h2>
+      <p>Email: community@portal.com</p>
+    </section>
+  </main>
+
+
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 Local Community Council</p>
+  </footer>
+
+
+  <script>
+    function validatePhone(input) {
+      if (!/\d{10}/.test(input.value)) {
+        alert("Enter 10-digit phone number");
+      }
+    }
+
+    function showOutput(e) {
+      e.preventDefault();
+      document.getElementById('confirmation').innerText = "Registration submitted!";
+    }
+
+    function savePreference(select) {
+      localStorage.setItem('eventType', select.value);
+    }
+
+    window.onload = function() {
+      const saved = localStorage.getItem('eventType');
+      if (saved) {
+        document.getElementById('eventType').value = saved;
+      }
+    }
+
+    function clearPrefs() {
+      localStorage.clear();
+      sessionStorage.clear();
+      alert("Preferences cleared");
+    }
+
+    function countChars(textarea) {
+      document.getElementById('charCount').innerText = "Characters: " + textarea.value.length;
+    }
+
+    function readyToPlay() {
+      document.getElementById("videoStatus").innerText = "Video ready to play";
+    }
+
+    window.onbeforeunload = function() {
+      return "You have unsaved changes. Are you sure you want to leave?";
+    }
+
+    function findNearby() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            document.getElementById('locationOutput').innerText =
+              `Lat: ${pos.coords.latitude}, Lon: ${pos.coords.longitude}`;
+          },
+          (err) => {
+            alert("Error: " + err.message);
+          },
+          { enableHighAccuracy: true, timeout: 5000 }
+        );
+      } else {
+        alert("Geolocation not supported");
+      }
+    }
+  </script>
+</body>
+</html>
